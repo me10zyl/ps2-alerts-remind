@@ -31,7 +31,9 @@ mail.password=yourpassword
 ```
 3. 运行
 ```bash
-./start.sh 或 mvnw spring-boot:run
+chmod +x start.sh
+chmod +x mvnw
+./start.sh 或 ./mvnw spring-boot:run
 ```
 
 # API接口
