@@ -72,6 +72,7 @@ public class SubscribeUserService {
             }
             Map<String, String> variableMap = new HashMap<>(model);
             variableMap.put("server", server);
+            variableMap.put("alertStartTime", DateUtil.format(dateTime, "MM/dd HH:mm:ss"));
             MailTemplateUtil mailTemplateUtil = new MailTemplateUtil(variableMap);
             boolean sendSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
             if(sendSuccess){

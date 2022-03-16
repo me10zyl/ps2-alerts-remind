@@ -11,7 +11,7 @@ public class MailTemplateUtil {
     }
 
     public  String getTitle(){
-        return replaceVariables("奥拉西斯之{server}警报已经开始了");
+        return replaceVariables("奥拉西斯之{server}警报已经在{alertStartTime}开始了");
     }
 
     private String replaceVariables(String str) {
@@ -26,6 +26,6 @@ public class MailTemplateUtil {
 
 
     public  String getContent(){
-        return replaceVariables("快去奥拉西斯白嫖吧:{description}");
+        return replaceVariables("快去征服奥拉西斯:{description}");
     }
 }
