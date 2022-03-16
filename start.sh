@@ -1,1 +1,1 @@
-nohup ./mvnw spring-boot:run > out.log 2&>1 &
+nohup ./mvnw spring-boot:run > out.log 2>&1 &
