@@ -7,7 +7,7 @@
 
 1. 下载
 ```bash
-git clone github.com@me10zyl:ps2-alerts-remind 
+git clone https://github.com/me10zyl/ps2-alerts-remind.git
 ```
 
 2. 拷贝数据库到任意地方，并且更改配置文件到该位置
