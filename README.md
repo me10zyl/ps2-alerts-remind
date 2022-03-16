@@ -15,8 +15,8 @@ git clone github.com@me10zyl:ps2-alerts-remind
 cp baksql/db.sqlite /var/db.sqlite
 vim src/main/resources/application.properties
 ```
-拷贝 baksql/db.sqlite 到 /var/db.sqlite， 将 application.properties 中的 `spring.datasource.url=jdbc:sqlite:E:\\db.sqlite`
-改为 `spring.datasource.url=jdbc:sqlite:/var/sqlite`
+拷贝 baksql/db.sqlite 到 /var/db.sqlite， 将 src/main/resources/application.properties 中的 `spring.datasource.url=jdbc:sqlite:E:\\db.sqlite`
+改为 `spring.datasource.url=jdbc:sqlite:/var/db.sqlite`
 
 3. 运行
 ```bash
