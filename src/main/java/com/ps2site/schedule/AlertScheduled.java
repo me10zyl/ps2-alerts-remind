@@ -21,7 +21,7 @@ public class AlertScheduled {
     @Autowired
     private SubscribeUserService subscribeUserService;
 
-    @Scheduled(fixedDelay = 120000 ,initialDelay = 0)//2min
+    @Scheduled(fixedDelay = 300000 ,initialDelay = 0)//5min
     public void schedule5Min(){
         for (String serverName : ServerConstants.getServerNames()) {
             Map<String, String> model = new HashMap<>();
