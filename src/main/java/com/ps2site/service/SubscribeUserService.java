@@ -44,7 +44,7 @@ public class SubscribeUserService {
                 .eq(SubscribeUser::getServer, user.getServer())
         );
         if(count > 0){
-            throw new BizException("该邮箱已订阅");
+            throw new BizException("该邮箱已经订阅过了，不要重复订阅");
         }
         subscribeUserDao.insert(user);
     }

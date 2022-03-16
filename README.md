@@ -38,15 +38,15 @@ mvnw spring-boot:run
 
 1. 添加订阅用户
 ```bash
-curl 'http://localhost:8080/user/add?server=Connery&email=myemail@qq.com'
+curl 'http://localhost:10030/user/add?server=Connery&email=myemail@qq.com'
 ```
 2. 列出所有订阅用户
 ```bash
-curl 'http://localhost:8080/user/list'
+curl 'http://localhost:10030/user/list'
 ```
 3. 删除订阅用户
 ```bash
-curl 'http://localhost:8080/user/delete?server=Connery&email=myemail@qq.com'
+curl 'http://localhost:10030/user/delete?server=Connery&email=myemail@qq.com'
 ```
 
 # 更新版本

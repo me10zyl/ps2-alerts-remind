@@ -1,0 +1,44 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>行星边际2警报开始提醒</title>
+</head>
+<body>
+<div>
+选择服务器：
+<select id="servers">
+    <option value="SolTech">SolTech</option>
+    <option value="Emerald">Emerald</option>
+    <option value="Connery">Connery</option>
+    <option value="Miller">Miller</option>
+    <option value="Cobalt">Cobalt</option>
+</select>
+</div>
+<div>
+<input placeholder="填写你的邮箱地址" id="email"/>
+</div>
+<div>
+<button id="btn">提交</button>
+</div>
+<script>
+    document.getElementById('btn').addEventListener('click', event => {
+      onclick()
+    });
+    function onclick(){
+        let email = document.getElementById('email').value;
+        let server = document.getElementById('servers').value;
+        if(email == null || server == null || email.trim() === ""){
+            alert('请填写email和选择server')
+            return
+        }
+        fetch('/user/add?email=' + email + "&server=" +  server)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function(ret) {
+             alert(ret.message)
+        });
+    }
+</script>
+</body>
+</html>
