@@ -18,6 +18,17 @@ vim src/main/resources/application.properties
 拷贝 baksql/db.sqlite 到 /var/db.sqlite， 将 src/main/resources/application.properties 中的 `spring.datasource.url=jdbc:sqlite:E:\\db.sqlite`
 改为 `spring.datasource.url=jdbc:sqlite:/var/db.sqlite`
 
+3. 填写SMTP服务器配置
+```bash
+vim src/main/resources/smtp.properties
+```
+更改 src/main/resources/smtp.properties里的配置
+```
+mail.smtp.server=smtp.163.com
+mail.smtp.port=465
+mail.user=xxx@163.com
+mail.password=yourpassword
+```
 3. 运行
 ```bash
 mvnw spring-boot:run
