@@ -80,7 +80,7 @@ public class SubscribeUserService {
             if(user.getQq() != null){
                 List<QQMessage> qqMessageList = new ArrayList<QQMessage>();
                 qqMessageList.add(QQMessage.textMessage(mailTemplateUtil.getQQMessage()));
-                sendSuccess = sendSuccess && qqBot.sendMessage(user.getQq(), qqMessageList);
+                sendSuccess = qqBot.sendMessage(user.getQq(), qqMessageList);
             }
             if(sendSuccess){
                 user.setServer(null);;
