@@ -21,7 +21,7 @@ public class MailTemplateUtil {
     private String replaceVariables(String str) {
         StringBuilder s = new StringBuilder(str);
         variables.forEach((k,v)->{
-            String newString = s.toString().replaceAll("\\{" + k + "\\}", (String)v);
+            String newString = s.toString().replaceAll("\\{" + k + "\\}", String.valueOf(v));
             s.delete(0, s.length());
             s.append(newString);
         });
