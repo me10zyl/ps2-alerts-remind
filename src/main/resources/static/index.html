@@ -45,8 +45,8 @@
         let email = document.getElementById('email').value;
         let server = document.getElementById('servers').value;
         let qq = document.getElementById('qq').value;
-        let isSendEmail = document.getElementById('isSendEmail').value;
-        let isQQGroup = document.getElementById('isQQGroup').value;
+        let isSendEmail = document.getElementById('isSendEmail').checked;
+        let isQQGroup = document.getElementById('isQQGroup').checked;
         if(email == null || server == null || email.trim() === ""){
             alert('请填写email和选择server')
             return
@@ -60,8 +60,8 @@
                 email : email,
                 server :  server,
                 qq : qq,
-                isSendEmail : isSendEmail === "on" ? 1 : 0,
-                isQQGroup : isQQGroup === "on" ? 1 : 0,
+                isSendEmail : isSendEmail,
+                isQQGroup : isQQGroup
             })
         })
         fetch(req)
