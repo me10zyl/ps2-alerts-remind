@@ -5,6 +5,16 @@
 </head>
 <body>
 <div>
+    <p>
+        PS2警报提醒工具-本警报提醒用于PS2警报开始会发送一段文本给订阅用户。
+        以下的提交操作即注册为订阅用户。
+        该提醒分为邮箱提醒和QQ提醒，可以同时邮箱提醒和QQ提醒，以下带*的输入框是必须填入的。
+        如果只想用QQ提醒，请在邮箱地址填上你的邮箱后，取消勾选发送邮件。
+        如果是QQ群，必须勾选“是QQ群”。
+        发送QQ提醒必须添加机器人的QQ或者拉机器人进群。
+    </p>
+</div>
+<div>
 选择服务器：
 <select id="servers">
     <option value="SolTech">SolTech</option>
@@ -15,14 +25,18 @@
 </select>
 </div>
 <div>
-<input placeholder="填写你的邮箱地址" id="email"/>
+*<input placeholder="填写你的邮箱地址" id="email"/>
+<input type="checkbox" checked id="isSendEmail"/>发送邮件
 </div>
 <div>
-<input placeholder="填写你的QQ(可选)" id="qq"/> (需要添加机器人的QQ才能发送消息给你)
+<input placeholder="填写你的QQ(可选，不填则不发送)" id="qq"/> (需要添加机器人的QQ才能发送消息给你)
+<input type="checkbox" id="isQQGroup"/>是QQ群
 </div>
 <div>
-<button id="btn">提交</button>
+<button id="btn">添加订阅</button>
 </div>
+<hr />
+<a href="delete.html">我要取消订阅</a>
 <script>
     document.getElementById('btn').addEventListener('click', event => {
       onclick()
@@ -31,11 +45,26 @@
         let email = document.getElementById('email').value;
         let server = document.getElementById('servers').value;
         let qq = document.getElementById('qq').value;
+        let isSendEmail = document.getElementById('isSendEmail').value;
+        let isQQGroup = document.getElementById('isQQGroup').value;
         if(email == null || server == null || email.trim() === ""){
             alert('请填写email和选择server')
             return
         }
-        fetch('/user/add?email=' + email + "&server=" +  server + "&qq=" + qq)
+        let req = new Request('/user/add', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8;'
+            },
+            body: JSON.stringify({
+                email : email,
+                server :  server,
+                qq : qq,
+                isSendEmail : isSendEmail,
+                isQQGroup : isQQGroup
+            })
+        })
+        fetch(req)
         .then(function(response) {
             return response.json();
         })

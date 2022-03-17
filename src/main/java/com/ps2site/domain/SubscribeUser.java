@@ -13,5 +13,6 @@ public class SubscribeUser {
     private String server;
     private Date alertStartTime;
     private String qq;
-
+    private Boolean isQQGroup;
+    private Boolean isSendMail;
 }

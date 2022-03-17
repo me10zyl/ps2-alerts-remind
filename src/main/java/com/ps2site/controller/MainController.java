@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,11 +38,11 @@ public class MainController {
 
     @RequestMapping("/user/add")
     @ResponseBody
-    public ApiResult addUser(String email, String server, @RequestParam(required = false) String qq){
-        if(ServerConstants.getServerNames().stream().noneMatch(e->e.equals(server))){
+    public ApiResult addUser(@RequestBody SubscribeUser user){
+        if(ServerConstants.getServerNames().stream().noneMatch(e->e.equals(user.getServer()))){
             throw new BizException("服务器仅能为：" + String.join(",", ServerConstants.getServerNames()));
         }
-        subscribeUserService.addUser(new SubscribeUser(email, server, null,qq));
+        subscribeUserService.addUser(user);
         return ApiResult.success("添加成功", null);
     }
 

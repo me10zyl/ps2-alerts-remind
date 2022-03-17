@@ -42,6 +42,7 @@ public class SubscribeUserService {
     }
 
     public void addUser(SubscribeUser user){
+        user.setAlertStartTime(null);
         if(user.getEmail() == null || user.getServer() == null){
             throw new BizException("请填写邮件和服务器");
         }
@@ -80,7 +81,11 @@ public class SubscribeUserService {
             if(user.getQq() != null){
                 List<QQMessage> qqMessageList = new ArrayList<QQMessage>();
                 qqMessageList.add(QQMessage.textMessage(mailTemplateUtil.getQQMessage()));
-                sendSuccess = qqBot.sendMessage(user.getQq(), qqMessageList);
+                if(user.getIsQQGroup()){
+                    sendSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
+                }else {
+                    sendSuccess = qqBot.sendFriendMessage(user.getQq(), qqMessageList);
+                }
             }
             boolean mailSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
             if(user.getQq() == null){
@@ -90,6 +95,8 @@ public class SubscribeUserService {
                 user.setServer(null);;
                 user.setEmail(null);
                 user.setQq(null);
+                user.setIsSendMail(null);
+                user.setIsQQGroup(null);
                 user.setAlertStartTime(alertResult.getAlertStartTime());
                 subscribeUserDao.update(user, new LambdaUpdateWrapper<SubscribeUser>()
                         .eq(SubscribeUser::getEmail, email)

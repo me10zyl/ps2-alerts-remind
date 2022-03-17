@@ -1,0 +1,43 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>行星边际2警报开始提醒</title>
+</head>
+<body>
+<div>
+    <p>
+        填写邮箱和服务器即可删除订阅
+    </p>
+</div>
+<div>
+    选择服务器：
+    <select id="servers">
+        <option value="SolTech">SolTech</option>
+        <option value="Emerald">Emerald</option>
+        <option value="Connery">Connery</option>
+        <option value="Miller">Miller</option>
+        <option value="Cobalt">Cobalt</option>
+    </select>
+</div>
+<div>
+*<input placeholder="填写你的邮箱地址" id="email"/>
+</div>
+<button id="btn">删除订阅</button>
+<script>
+    document.getElementById('btn').addEventListener('click', event => {
+        onclick()
+    });
+    function onclick(){
+        let email = document.getElementById('email').value;
+        let server = document.getElementById('servers').value;
+        fetch('user/delete?server=' +server + "&email=" + email)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(ret) {
+                alert(ret.message)
+            });
+    }
+</script>
+</body>
+</html>
