@@ -16,6 +16,7 @@
 </div>
 <div>
 <input placeholder="填写你的邮箱地址" id="email"/>
+<input placeholder="填写你的QQ(可选)" id="qq"/> (需要添加机器人的QQ才能发送消息给你)
 </div>
 <div>
 <button id="btn">提交</button>
@@ -27,11 +28,12 @@
     function onclick(){
         let email = document.getElementById('email').value;
         let server = document.getElementById('servers').value;
+        let qq = document.getElementById('qq').value;
         if(email == null || server == null || email.trim() === ""){
             alert('请填写email和选择server')
             return
         }
-        fetch('/user/add?email=' + email + "&server=" +  server)
+        fetch('/user/add?email=' + email + "&server=" +  server + "&qq=" + qq)
         .then(function(response) {
             return response.json();
         })
