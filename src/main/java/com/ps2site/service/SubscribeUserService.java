@@ -76,11 +76,15 @@ public class SubscribeUserService {
             variableMap.put("alertEndTimeFormat", DateUtil.format(alertResult.getAlertEndTime(), "MM/dd HH:mm:ss"));
             variableMap.put("durationFormat", alertResult.getDuration()/60 + "分钟");
             MailTemplateUtil mailTemplateUtil = new MailTemplateUtil(variableMap);
-            boolean sendSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
+            boolean sendSuccess = false;
             if(user.getQq() != null){
                 List<QQMessage> qqMessageList = new ArrayList<QQMessage>();
                 qqMessageList.add(QQMessage.textMessage(mailTemplateUtil.getQQMessage()));
                 sendSuccess = qqBot.sendMessage(user.getQq(), qqMessageList);
+            }
+            boolean mailSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
+            if(user.getQq() == null){
+                sendSuccess = mailSuccess;
             }
             if(sendSuccess){
                 user.setServer(null);;
