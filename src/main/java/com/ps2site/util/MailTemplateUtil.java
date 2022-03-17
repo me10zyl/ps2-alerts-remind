@@ -15,7 +15,7 @@ public class MailTemplateUtil {
     }
 
     public String getQQMessage(){
-        return replaceVariables(getTitle() + "," + getContent() + ";警报结束时间：{alertEndTimeFormat},时长:{durationFormat}.");
+        return replaceVariables(getTitle() + "," + getContent());
     }
 
     private String replaceVariables(String str) {
