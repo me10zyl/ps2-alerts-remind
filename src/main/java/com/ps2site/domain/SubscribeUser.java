@@ -1,5 +1,6 @@
 package com.ps2site.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,6 +14,7 @@ public class SubscribeUser {
     private String server;
     private Date alertStartTime;
     private String qq;
+    @TableField("is_qq_group")
     private Boolean isQQGroup;
     private Boolean isSendMail;
 }
