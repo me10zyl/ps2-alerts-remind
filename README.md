@@ -31,7 +31,7 @@ mail.user=xxx@163.com
 mail.password=yourpassword
 ```
 
-4. 填写QQ机器人配置(可选配置，如果不使用QQ机器人可跳过，使用的是 me10zyl/mirai-qqbot-lib 这个库，了解更详细用法可参见此项目)
+4. 填写QQ机器人配置(可选配置，如果不使用QQ机器人可跳过，使用的是 [me10zyl/mirai-qqbot-lib](me10zyl/mirai-qqbot-lib) 这个库，了解更详细用法可参见此项目)
 ```bash
 vim src/main/resources/qq.properties
 ```
