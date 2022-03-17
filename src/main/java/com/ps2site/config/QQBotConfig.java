@@ -17,7 +17,13 @@ public class QQBotConfig {
 
     @Bean
     public QQBot qqbot(){
-        return new QQBot(qqNumber, verifyCode);
+        QQBot qqBot = null;
+        try {
+             qqBot = new QQBot(qqNumber, verifyCode);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return qqBot;
     }
 
 }

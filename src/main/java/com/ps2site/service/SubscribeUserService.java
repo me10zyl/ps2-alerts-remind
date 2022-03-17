@@ -81,6 +81,10 @@ public class SubscribeUserService {
             if(user.getQq() != null){
                 List<QQMessage> qqMessageList = new ArrayList<QQMessage>();
                 qqMessageList.add(QQMessage.textMessage(mailTemplateUtil.getQQMessage()));
+                if(qqBot == null){
+                    log.error("QQ机器人未初始化成功！");
+                    throw new BizException("QQ机器人未初始化成功");
+                }
                 if(user.getIsQQGroup()){
                     sendSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
                 }else {
