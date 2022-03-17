@@ -87,8 +87,10 @@ public class SubscribeUserService {
                 }
                 if(user.getIsQQGroup()){
                     sendSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
+                    log.info("发送QQ群消息：" + user.getQq() + ", success=" +  sendSuccess);
                 }else {
                     sendSuccess = qqBot.sendFriendMessage(user.getQq(), qqMessageList);
+                    log.info("发送QQ消息：" + user.getQq() + ", success=" +  sendSuccess);
                 }
             }
             boolean mailSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);

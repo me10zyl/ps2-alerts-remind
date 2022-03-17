@@ -29,7 +29,7 @@ public class AlertScheduled {
             AlertResult alertStarted = alertSpider.isAlertStarted(serverName);
             log.info("检查{}警报：{}", serverName, alertStarted.isStarted() ? "已开始, 开始时间：" + alertStarted.getPubDate() : "未开始");
             if(alertStarted.isStarted()){
-                log.info("开始给{}的订阅用户发送邮件", serverName);
+                log.info("开始给{}的订阅用户发送邮件/QQ", serverName);
                 subscribeUserService.deliveryAlertStartedEMailsAndQQ(serverName, alertStarted);
             }
         }
