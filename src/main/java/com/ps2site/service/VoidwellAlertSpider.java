@@ -1,14 +1,15 @@
 package com.ps2site.service;
 
-import org.springframework.stereotype.Component;
+import com.ps2site.domain.AlertResult;
 
 import java.util.Map;
 
 
 public class VoidwellAlertSpider implements AlertSpider{
 
+
     @Override
-    public boolean isAlertStarted(String serverName, Map<String, String> models) {
-        return false;
+    public AlertResult isAlertStarted(String serverName) {
+        return null;
     }
 }

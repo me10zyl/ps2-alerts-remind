@@ -1,5 +1,6 @@
 package com.ps2site.service;
 
+import com.ps2site.domain.AlertResult;
 import com.ps2site.domain.XmlItem;
 import com.ps2site.util.ServerConstants;
 import com.yilnz.surfing.core.SurfHttpRequestBuilder;
@@ -10,8 +11,12 @@ import org.springframework.stereotype.Component;
 import us.codecraft.xsoup.XElements;
 import us.codecraft.xsoup.Xsoup;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -24,12 +29,14 @@ public class Ps2FisuPwSpider implements AlertSpider {
 
     //for test
     public static void main(String[] args) {
-        boolean connery = new Ps2FisuPwSpider().isAlertStarted("Connery", new HashMap<>());
+        AlertResult connery = new Ps2FisuPwSpider().isAlertStarted("Connery");
         System.out.println(connery);
     }
 
     @Override
-    public boolean isAlertStarted(String serverName, Map<String, String> models) {
+    public AlertResult isAlertStarted(String serverName) {
+
+        AlertResult alertResult = new AlertResult();
 
         Map<String, Integer> serverMappings = new HashMap<>();
         serverMappings.put(ServerConstants.SolTech, 40);
@@ -51,11 +58,19 @@ public class Ps2FisuPwSpider implements AlertSpider {
             xmlItem.setDuration(xmlItem.isEnd() ? Long.valueOf(item.getElementsByTag("fisupw:duration").get(0).text()) : 0L);
             return xmlItem;
         }).collect(Collectors.toList());
-        if (models != null) {
-            models.put("description", collect.get(0).getDescription());
-            models.put("duration", String.valueOf(collect.get(0).getDuration()));
-            models.put("pubDate", collect.get(0).getPubDate());
+        alertResult.setDescription(collect.get(0).getDescription());
+        alertResult.setDuration(collect.get(0).getDuration());
+        alertResult.setPubDate(collect.get(0).getPubDate());
+
+        Date dateTime = null;
+        try {
+            dateTime = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(alertResult.getPubDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        return !collect.get(0).isEnd();
+        alertResult.setAlertStartTime(dateTime);
+        alertResult.setAlertEndTime(new Date(alertResult.getDuration()*1000 + alertResult.getAlertStartTime().getTime()));
+        alertResult.setStarted(!collect.get(0).isEnd());
+        return alertResult;
     }
 }

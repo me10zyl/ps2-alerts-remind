@@ -1,5 +1,6 @@
 package com.ps2site.schedule;
 
+import com.ps2site.domain.AlertResult;
 import com.ps2site.service.AlertSpider;
 import com.ps2site.service.SubscribeUserService;
 import com.ps2site.util.ServerConstants;
@@ -24,12 +25,12 @@ public class AlertScheduled {
     @Scheduled(fixedDelay = 300000 ,initialDelay = 0)//5min
     public void schedule5Min(){
         for (String serverName : ServerConstants.getServerNames()) {
-            Map<String, String> model = new HashMap<>();
-            boolean alertStarted = alertSpider.isAlertStarted(serverName, model);
-            log.info("检查{}警报：{}", serverName, alertStarted ? "已开始, 开始时间：" + model.get("pubDate") : "未开始");
-            if(alertStarted){
+
+            AlertResult alertStarted = alertSpider.isAlertStarted(serverName);
+            log.info("检查{}警报：{}", serverName, alertStarted.isStarted() ? "已开始, 开始时间：" + alertStarted.getPubDate() : "未开始");
+            if(alertStarted.isStarted()){
                 log.info("开始给{}的订阅用户发送邮件", serverName);
-                subscribeUserService.deliveryAlertStartedEMails(serverName, model);
+                subscribeUserService.deliveryAlertStartedEMailsAndQQ(serverName, alertStarted);
             }
         }
     }

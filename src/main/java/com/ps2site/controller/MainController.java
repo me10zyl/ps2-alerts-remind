@@ -6,11 +6,13 @@ import com.ps2site.domain.SubscribeUser;
 import com.ps2site.exception.BizException;
 import com.ps2site.service.SubscribeUserService;
 import com.ps2site.util.ServerConstants;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
@@ -35,11 +37,11 @@ public class MainController {
 
     @RequestMapping("/user/add")
     @ResponseBody
-    public ApiResult addUser(String email, String server){
+    public ApiResult addUser(String email, String server, @RequestParam(required = false) String qq){
         if(ServerConstants.getServerNames().stream().noneMatch(e->e.equals(server))){
             throw new BizException("服务器仅能为：" + String.join(",", ServerConstants.getServerNames()));
         }
-        subscribeUserService.addUser(new SubscribeUser(email, server, null));
+        subscribeUserService.addUser(new SubscribeUser(email, server, null,qq));
         return ApiResult.success("添加成功", null);
     }
 

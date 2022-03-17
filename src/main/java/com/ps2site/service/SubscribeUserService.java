@@ -3,13 +3,17 @@ package com.ps2site.service;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.ps2site.dao.SubscribeUserDao;
+import com.ps2site.domain.AlertResult;
 import com.ps2site.domain.SubscribeUser;
 import com.ps2site.exception.BizException;
 import com.ps2site.util.MailTemplateUtil;
 import com.ps2site.util.Mailer;
+import com.yilnz.qqbotlib.QQBot;
+import com.yilnz.qqbotlib.entity.QQMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,8 @@ import java.util.TimeZone;
 public class SubscribeUserService {
     @Autowired
     private SubscribeUserDao subscribeUserDao;
+    @Autowired
+    private QQBot qqBot;
 
     public List<SubscribeUser> getUsers() {
         return subscribeUserDao.selectList(new LambdaQueryWrapper<>());
@@ -55,31 +61,32 @@ public class SubscribeUserService {
     }
 
     @Transactional
-    public void deliveryAlertStartedEMails(String serverName, Map<String, String> model) {
+    public void deliveryAlertStartedEMailsAndQQ(String serverName, AlertResult alertResult) {
+        JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(alertResult));
         getUsers().stream().filter(u->u.getServer().equals(serverName)).forEach(user -> {
             String email = user.getEmail();
             String server = user.getServer();
-            String pubDate = model.get("pubDate");
-            Date dateTime = null;
-            try {
-                dateTime = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(pubDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            if(dateTime.equals(user.getAlertStartTime())){
+            if(alertResult.getAlertStartTime().equals(user.getAlertStartTime())){
                 log.info("{}-{}已经发送过了，跳过", email, server);
                 return;
             }
-            Map<String, String> variableMap = new HashMap<>(model);
+            Map<String, Object> variableMap = new HashMap<>(jsonObject);
             variableMap.put("server", server);
-            variableMap.put("alertStartTime", DateUtil.format(dateTime, "MM/dd HH:mm:ss"));
+            variableMap.put("alertStartTimeFormat", DateUtil.format(alertResult.getAlertStartTime(), "MM/dd HH:mm:ss"));
+            variableMap.put("alertEndTimeFormat", DateUtil.format(alertResult.getAlertEndTime(), "MM/dd HH:mm:ss"));
+            variableMap.put("durationFormat", alertResult.getDuration()/60 + "分钟");
             MailTemplateUtil mailTemplateUtil = new MailTemplateUtil(variableMap);
             boolean sendSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
+            if(user.getQq() != null){
+                List<QQMessage> qqMessageList = new ArrayList<QQMessage>();
+                qqMessageList.add(QQMessage.textMessage(mailTemplateUtil.getQQMessage()));
+                sendSuccess = sendSuccess && qqBot.sendMessage(user.getQq(), qqMessageList);
+            }
             if(sendSuccess){
                 user.setServer(null);;
                 user.setEmail(null);
-
-                user.setAlertStartTime(dateTime);
+                user.setQq(null);
+                user.setAlertStartTime(alertResult.getAlertStartTime());
                 subscribeUserDao.update(user, new LambdaUpdateWrapper<SubscribeUser>()
                         .eq(SubscribeUser::getEmail, email)
                         .eq(SubscribeUser::getServer, server)

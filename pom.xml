@@ -59,5 +59,11 @@
             <artifactId>javax.mail</artifactId>
             <version>1.6.2</version>
         </dependency>
+        <dependency>
+            <groupId>com.yilnz</groupId>
+            <artifactId>miraiQQBotLib</artifactId>
+            <version>1.0</version>
+            <systemPath>${project.basedir}/lib/miraiQQBotLib-1.0.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

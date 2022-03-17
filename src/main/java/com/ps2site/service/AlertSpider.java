@@ -1,9 +1,11 @@
 package com.ps2site.service;
 
+import com.ps2site.domain.AlertResult;
+
 import java.util.Map;
 
 public interface AlertSpider {
 
-    boolean isAlertStarted(String serverName, Map<String, String> models);
+    AlertResult isAlertStarted(String serverName);
 
 }

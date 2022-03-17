@@ -12,5 +12,6 @@ public class SubscribeUser {
     private String email;
     private String server;
     private Date alertStartTime;
+    private String qq;
 
 }

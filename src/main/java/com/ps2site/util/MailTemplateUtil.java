@@ -4,20 +4,24 @@ import java.util.Map;
 
 public class MailTemplateUtil {
 
-    private Map<String, String> variables;
+    private Map<String, Object> variables;
 
-    public MailTemplateUtil(Map<String, String> variables) {
+    public MailTemplateUtil(Map<String, Object> variables) {
         this.variables = variables;
     }
 
     public  String getTitle(){
-        return replaceVariables("奥拉西斯之{server}警报已经在{alertStartTime}开始了");
+        return replaceVariables("奥拉西斯之{server}警报已经在{alertStartTimeFormat}开始了");
+    }
+
+    public String getQQMessage(){
+        return replaceVariables(getTitle() + "," + getContent() + ";警报结束时间：{alertEndTimeFormat},时长:{durationFormat}.");
     }
 
     private String replaceVariables(String str) {
         StringBuilder s = new StringBuilder(str);
         variables.forEach((k,v)->{
-            String newString = s.toString().replaceAll("\\{" + k + "\\}", v);
+            String newString = s.toString().replaceAll("\\{" + k + "\\}", (String)v);
             s.delete(0, s.length());
             s.append(newString);
         });
