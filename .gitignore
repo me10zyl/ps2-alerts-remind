@@ -5,3 +5,4 @@ target/
 src/main/resources/stmp-bak.properties
 src/main/resources/stmp.properties
 src/main/resources/qqbot-bak.properties
+src/main/resources/qqbot.properties
