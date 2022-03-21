@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 /**
  * https://ps2.fisu.pw/
  */
-@Component
 public class Ps2FisuPwSpider implements AlertSpider {
 
 
