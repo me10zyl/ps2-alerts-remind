@@ -113,7 +113,7 @@ public class MsgCmd {
                     ret = new String[]{"出现了某种错误，请联系管理员"};
                 } finally {
                     if (clearStatus) {
-                        context.put(msg.getSender().getId(), null);
+                        context.put(msg.getSender().getId(), ContextStatus.NONE);
                     }
                 }
         }
