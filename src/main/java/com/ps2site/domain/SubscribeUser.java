@@ -16,5 +16,4 @@ public class SubscribeUser {
     private String qq;
     @TableField("is_qq_group")
     private Boolean isQQGroup;
-    private Boolean isSendMail;
 }

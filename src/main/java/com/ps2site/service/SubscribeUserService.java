@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.function.Function;
 
 @Service
 @Slf4j
@@ -41,17 +42,37 @@ public class SubscribeUserService {
         return subscribeUserDao.selectList(new LambdaQueryWrapper<>());
     }
 
+    public List<SubscribeUser> getUsers(String qq) {
+        LambdaQueryWrapper<SubscribeUser> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(qq != null, SubscribeUser::getQq, qq);
+        return subscribeUserDao.selectList(queryWrapper);
+    }
+
     public void addUser(SubscribeUser user){
         user.setAlertStartTime(null);
-        if(user.getEmail() == null || user.getServer() == null){
-            throw new BizException("请填写邮件和服务器");
+        if(user.getServer() == null){
+            throw new BizException("请填写服务器");
         }
-        Long count = subscribeUserDao.selectCount(new LambdaQueryWrapper<SubscribeUser>()
-                .eq(SubscribeUser::getEmail, user.getEmail())
-                .eq(SubscribeUser::getServer, user.getServer())
-        );
-        if(count > 0){
-            throw new BizException("该邮箱已经订阅过了，不要重复订阅");
+        if(user.getQq() == null && user.getEmail() == null){
+            throw new BizException("请填写邮箱地址");
+        }
+        if(user.getEmail() != null) {
+            Long count = subscribeUserDao.selectCount(new LambdaQueryWrapper<SubscribeUser>()
+                    .eq(SubscribeUser::getEmail, user.getEmail())
+                    .eq(SubscribeUser::getServer, user.getServer())
+            );
+            if (count > 0) {
+                throw new BizException("该邮箱已经订阅过了，不要重复订阅");
+            }
+        }
+        if(user.getQq() != null) {
+            Long count = subscribeUserDao.selectCount(new LambdaQueryWrapper<SubscribeUser>()
+                    .eq(SubscribeUser::getQq, user.getEmail())
+                    .eq(SubscribeUser::getServer, user.getServer())
+            );
+            if (count > 0) {
+                throw new BizException("该QQ已经订阅过了，不要重复订阅");
+            }
         }
         subscribeUserDao.insert(user);
     }
@@ -93,15 +114,16 @@ public class SubscribeUserService {
                     log.info("发送QQ消息：" + user.getQq() + ", success=" +  sendSuccess);
                 }
             }
-            boolean mailSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
-            if(user.getQq() == null){
-                sendSuccess = mailSuccess;
+            if(user.getEmail() != null) {
+                boolean mailSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
+                if (user.getQq() == null) {
+                    sendSuccess = mailSuccess;
+                }
             }
             if(sendSuccess){
                 user.setServer(null);;
                 user.setEmail(null);
                 user.setQq(null);
-                user.setIsSendMail(null);
                 user.setIsQQGroup(null);
                 user.setAlertStartTime(alertResult.getAlertStartTime());
                 subscribeUserDao.update(user, new LambdaUpdateWrapper<SubscribeUser>()
@@ -113,9 +135,10 @@ public class SubscribeUserService {
         });
     }
 
-    public boolean delete(String email, String server) {
+    public boolean delete(String email, String qq, String server) {
         int delete = subscribeUserDao.delete(new LambdaQueryWrapper<SubscribeUser>()
-                .eq(SubscribeUser::getEmail, email)
+                .eq(email != null, SubscribeUser::getEmail, email)
+                .eq(qq != null, SubscribeUser::getQq, qq)
                 .eq(SubscribeUser::getServer, server));
         if(delete > 0 ){
             return true;

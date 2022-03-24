@@ -6,26 +6,24 @@ import com.ps2site.domain.SubscribeUser;
 import com.ps2site.exception.BizException;
 import com.ps2site.service.SubscribeUserService;
 import com.ps2site.util.ServerConstants;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/")
 public class MainController {
+
+    @Value("${pwd.user.list}")
+    private String listUserPwd;
 
     @Autowired
     private SubscribeUserService subscribeUserService;
@@ -38,8 +36,8 @@ public class MainController {
 
     @RequestMapping("/user/add")
     @ResponseBody
-    public ApiResult addUser(@RequestBody SubscribeUser user){
-        if(ServerConstants.getServerNames().stream().noneMatch(e->e.equals(user.getServer()))){
+    public ApiResult addUser(@RequestBody SubscribeUser user) {
+        if (ServerConstants.getServerNames().stream().noneMatch(e -> e.equals(user.getServer()))) {
             throw new BizException("服务器仅能为：" + String.join(",", ServerConstants.getServerNames()));
         }
         subscribeUserService.addUser(user);
@@ -49,16 +47,19 @@ public class MainController {
 
     @RequestMapping("/user/list")
     @ResponseBody
-    public ApiResult listUsers(){
+    public ApiResult listUsers(String pwd) {
+        if (!listUserPwd.equals(pwd)) {
+            throw new BizException("输入正确的密码");
+        }
         List<SubscribeUser> users = subscribeUserService.getUsers();
         return ApiResult.success("查询成功", users);
     }
 
     @RequestMapping("/user/delete")
     @ResponseBody
-    public ApiResult deleteUser(String email, String server){
-        boolean delete = subscribeUserService.delete(email, server);
-        if(delete){
+    public ApiResult deleteUser(String email, String server, String qq) {
+        boolean delete = subscribeUserService.delete(email, qq, server);
+        if (delete) {
             return ApiResult.success("删除成功", null);
         }
         throw new BizException("查无此人");
