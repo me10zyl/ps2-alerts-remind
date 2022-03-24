@@ -22,7 +22,7 @@ import java.util.List;
 @RequestMapping("/")
 public class MainController {
 
-    @Value("${pwd.user.list}")
+    @Value("${pwd.user.list}:ps2alert")
     private String listUserPwd;
 
     @Autowired
