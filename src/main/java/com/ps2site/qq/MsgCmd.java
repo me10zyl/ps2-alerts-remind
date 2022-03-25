@@ -126,6 +126,6 @@ public class MsgCmd {
                     }
                 }
         }
-        return (String[]) Arrays.stream(ret).map(e->e + "\n").toArray();
+        return Arrays.stream(ret).map(e->e + "\n").collect(Collectors.toList()).toArray(new String[]{});
     }
 }
