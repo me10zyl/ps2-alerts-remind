@@ -85,7 +85,7 @@ public class MsgCmd {
                         if (matcher.find()) {
                             int index = Integer.parseInt(msg.getMessage()) - 1;
                             if (index >= ServerConstants.getServerNames().size()) {
-                                ret = new String[]{"取值范围为 1 -" + ServerConstants.getServerNames().size() + " ,请重新订阅"};
+                                ret = new String[]{"取值范围为 1-" + ServerConstants.getServerNames().size() + " ,请重新订阅"};
 //                                clearStatus = false;
                             } else {
                                 String server = ServerConstants.getServerNames().get(index);
