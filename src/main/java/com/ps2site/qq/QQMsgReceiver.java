@@ -26,7 +26,7 @@ public class QQMsgReceiver implements ApplicationListener<ContextRefreshedEvent>
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-
+        log.info("开启QQ事件接收...");
         qqBot.onMessageReceived(new QQEventListener() {
 
             @Override
