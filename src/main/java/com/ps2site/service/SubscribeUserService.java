@@ -92,7 +92,7 @@ public class SubscribeUserService {
             String email = user.getEmail();
             String server = user.getServer();
             if(alertResult.getAlertStartTime().equals(user.getAlertStartTime())){
-                log.info("{}-{}已经发送过了，跳过", email, server);
+                log.info("{}-{}-{}已经发送过了，跳过", email, user.getQq(), server);
                 return;
             }
             Map<String, Object> variableMap = new HashMap<>(jsonObject);
