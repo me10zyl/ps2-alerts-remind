@@ -2,6 +2,7 @@ package com.ps2site.qq;
 
 import com.ps2site.config.QQBotConfig;
 import com.ps2site.domain.SubscribeUser;
+import com.ps2site.exception.BizException;
 import com.ps2site.service.SubscribeUserService;
 import com.ps2site.util.ServerConstants;
 import com.yilnz.qqbotlib.QQBot;
@@ -84,8 +85,8 @@ public class MsgCmd {
                         if (matcher.find()) {
                             int index = Integer.parseInt(msg.getMessage()) - 1;
                             if (index >= ServerConstants.getServerNames().size()) {
-                                ret = new String[]{"取值范围为 1 -" + ServerConstants.getServerNames().size() + ",请重新订阅"};
-                                clearStatus = false;
+                                ret = new String[]{"取值范围为 1 -" + ServerConstants.getServerNames().size() + " ,请重新订阅"};
+//                                clearStatus = false;
                             } else {
                                 String server = ServerConstants.getServerNames().get(index);
                                 SubscribeUser subscribeUser =
@@ -94,8 +95,8 @@ public class MsgCmd {
                                 ret = new String[]{"订阅成功，订阅的服务器：" + server};
                             }
                         } else {
-                            ret = new String[]{"范围1-" + ServerConstants.getServerNames().size() + ",请重新订阅"};
-                            clearStatus = false;
+                            ret = new String[]{"范围 1-" + ServerConstants.getServerNames().size() + " ,请重新订阅"};
+//                            clearStatus = false;
                         }
                     } else if (ContextStatus.CANCELING_SUBSCRIBE.equals(contextStatus)) {
                         Matcher matcher = Pattern.compile("\\d").matcher(msg.getMessage());
@@ -103,20 +104,22 @@ public class MsgCmd {
                         if (matcher.find()) {
                             int index = Integer.parseInt(msg.getMessage()) - 1;
                             if (index >= users2.size()) {
-                                ret = new String[]{"取值范围为 1-" + users2.size() + ",请重新取消订阅"};
-                                clearStatus = false;
+                                ret = new String[]{"取值范围为 1-" + users2.size() + " ,请重新取消订阅"};
+//                                clearStatus = false;
                             } else {
                                 SubscribeUser subscribeUser = users2.get(index);
                                 subscribeUserService.delete(subscribeUser.getEmail(), subscribeUser.getQq(), subscribeUser.getServer());
                                 ret = new String[]{"取消订阅成功，取消订阅的服务器：" + subscribeUser.getServer()};
                             }
                         } else {
-                            ret = new String[]{"取值范围为 1-" + users2.size() + ",请重新取消订阅"};
-                            clearStatus = false;
+                            ret = new String[]{"取值范围为 1-" + users2.size() + " ,请重新取消订阅"};
+                            //clearStatus = false;
                         }
                     } else {
                         ret = new String[]{"可用命令：帮助、订阅、取消订阅、状态"};
                     }
+                }catch (BizException e){
+                    ret = new String[]{e.getMessage()};
                 } catch (Exception exception) {
                     log.error("QQ消息接收出问题了", exception);
                     ret = new String[]{"出现了某种错误，请联系管理员"};
