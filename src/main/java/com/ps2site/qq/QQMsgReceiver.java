@@ -41,8 +41,10 @@ public class QQMsgReceiver implements ApplicationListener<ContextRefreshedEvent>
             public void onReceivedFriendMessage(FriendMessage friendMessage) {
                 log.info("收到了好友消息：" + friendMessage.getSender().getId() + ":" + friendMessage.getMessage());
                 String[] replyList = msgCmd.onReceiveQQMsg(friendMessage);
-                List<QQMessage> qqMessageList = Arrays.stream(replyList).map(QQMessage::textMessage).collect(Collectors.toList());
-                qqBot.sendFriendMessage(friendMessage.getSender().getId(), qqMessageList);
+                if(replyList != null && replyList.length > 0) {
+                    List<QQMessage> qqMessageList = Arrays.stream(replyList).map(QQMessage::textMessage).collect(Collectors.toList());
+                    qqBot.sendFriendMessage(friendMessage.getSender().getId(), qqMessageList);
+                }
             }
         });
     }

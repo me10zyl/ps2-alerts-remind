@@ -15,6 +15,10 @@ public class QQBotConfig {
     @Value("${qqbot.qqNumber}")
     private String qqNumber;
 
+    public String getQqNumber() {
+        return qqNumber;
+    }
+
     @Bean
     public QQBot qqbot(){
         QQBot qqBot = null;

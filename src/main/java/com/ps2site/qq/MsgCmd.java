@@ -1,8 +1,10 @@
 package com.ps2site.qq;
 
+import com.ps2site.config.QQBotConfig;
 import com.ps2site.domain.SubscribeUser;
 import com.ps2site.service.SubscribeUserService;
 import com.ps2site.util.ServerConstants;
+import com.yilnz.qqbotlib.QQBot;
 import com.yilnz.qqbotlib.entity.FriendMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +23,15 @@ import java.util.stream.Collectors;
 public class MsgCmd {
     @Autowired
     private SubscribeUserService subscribeUserService;
+    @Autowired
+    private QQBotConfig qqBotConf;
 
     private ConcurrentHashMap<String, ContextStatus> context = new ConcurrentHashMap<>();
 
     public String[] onReceiveQQMsg(FriendMessage msg) {
+        if(msg.getSender().getId().equals(qqBotConf.getQqNumber())){
+            return null;
+        }
         String[] ret = null;
         switch (msg.getMessage()) {
             case "订阅":
