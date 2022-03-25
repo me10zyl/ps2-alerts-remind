@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -37,7 +38,10 @@ public class MsgCmd {
             case "订阅":
                 List<String> tempList = new ArrayList<>();
                 AtomicInteger atomicInteger = new AtomicInteger();
-                tempList.add("选择你的服务器:");
+                List<SubscribeUser> userss = subscribeUserService.getUsers(msg.getSender().getId());
+                tempList.add("你当前的订阅服务器：");
+                tempList.addAll(userss.stream().map(SubscribeUser::getServer).collect(Collectors.toList()));
+                tempList.add("输入序号选择你要订阅服务器:");
                 tempList.addAll(ServerConstants.getServerNames().stream().map(e -> {
                     return atomicInteger.incrementAndGet() + "." + e;
                 }).collect(Collectors.toList()));
@@ -59,9 +63,7 @@ public class MsgCmd {
                 List<SubscribeUser> users3 = subscribeUserService.getUsers(msg.getSender().getId());
                 List<String> tem2 = new ArrayList<>();
                 tem2.add("你当前的订阅服务器：");
-                tem2.addAll(users3.stream().map(u -> {
-                    return u.getServer();
-                }).collect(Collectors.toList()));
+                tem2.addAll(users3.stream().map(SubscribeUser::getServer).collect(Collectors.toList()));
                 ret = tem2.toArray(new String[]{});
                 break;
             case "用户列表":
@@ -82,7 +84,7 @@ public class MsgCmd {
                         if (matcher.find()) {
                             int index = Integer.parseInt(msg.getMessage()) - 1;
                             if (index >= ServerConstants.getServerNames().size()) {
-                                ret = new String[]{"范围1-" + ServerConstants.getServerNames().size() + ",请重新选择"};
+                                ret = new String[]{"取值范围为 1 -" + ServerConstants.getServerNames().size() + ",请重新订阅"};
                                 clearStatus = false;
                             } else {
                                 String server = ServerConstants.getServerNames().get(index);
@@ -92,7 +94,7 @@ public class MsgCmd {
                                 ret = new String[]{"订阅成功，订阅的服务器：" + server};
                             }
                         } else {
-                            ret = new String[]{"范围1-" + ServerConstants.getServerNames().size() + ",请重新选择"};
+                            ret = new String[]{"范围1-" + ServerConstants.getServerNames().size() + ",请重新订阅"};
                             clearStatus = false;
                         }
                     } else if (ContextStatus.CANCELING_SUBSCRIBE.equals(contextStatus)) {
@@ -101,7 +103,7 @@ public class MsgCmd {
                         if (matcher.find()) {
                             int index = Integer.parseInt(msg.getMessage()) - 1;
                             if (index >= users2.size()) {
-                                ret = new String[]{"范围1-" + users2.size() + ",请重新选择"};
+                                ret = new String[]{"取值范围为 1-" + users2.size() + ",请重新取消订阅"};
                                 clearStatus = false;
                             } else {
                                 SubscribeUser subscribeUser = users2.get(index);
@@ -109,7 +111,7 @@ public class MsgCmd {
                                 ret = new String[]{"取消订阅成功，取消订阅的服务器：" + subscribeUser.getServer()};
                             }
                         } else {
-                            ret = new String[]{"范围1-" + users2.size() + ",请重新选择"};
+                            ret = new String[]{"取值范围为 1-" + users2.size() + ",请重新取消订阅"};
                             clearStatus = false;
                         }
                     } else {
@@ -124,6 +126,6 @@ public class MsgCmd {
                     }
                 }
         }
-        return ret;
+        return (String[]) Arrays.stream(ret).map(e->e + "\n").toArray();
     }
 }

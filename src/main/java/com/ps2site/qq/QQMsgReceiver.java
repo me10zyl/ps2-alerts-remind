@@ -38,6 +38,11 @@ public class QQMsgReceiver implements ApplicationListener<ContextRefreshedEvent>
             }
 
             @Override
+            public List<QQMessage> postReceivedNewFriendRequest(NewFriendRequest request) {
+                return Arrays.asList(QQMessage.textMessage("本鸭同意了你的请求，请输入帮助来查看命令列表。"));
+            }
+
+            @Override
             public void onReceivedFriendMessage(FriendMessage friendMessage) {
                 log.info("收到了好友消息：" + friendMessage.getSender().getId() + ":" + friendMessage.getMessage());
                 String[] replyList = msgCmd.onReceiveQQMsg(friendMessage);

@@ -67,7 +67,7 @@ public class SubscribeUserService {
         }
         if(user.getQq() != null) {
             Long count = subscribeUserDao.selectCount(new LambdaQueryWrapper<SubscribeUser>()
-                    .eq(SubscribeUser::getQq, user.getEmail())
+                    .eq(SubscribeUser::getQq, user.getQq())
                     .eq(SubscribeUser::getServer, user.getServer())
             );
             if (count > 0) {
