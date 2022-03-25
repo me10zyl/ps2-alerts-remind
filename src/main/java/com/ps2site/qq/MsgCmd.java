@@ -106,7 +106,7 @@ public class MsgCmd {
                             clearStatus = false;
                         }
                     } else {
-                        ret = new String[]{"可用命令：帮助、订阅、用户列表（需管理员）、取消订阅、状态"};
+                        ret = new String[]{"可用命令：帮助、订阅、取消订阅、状态"};
                     }
                 } catch (Exception exception) {
                     log.error("QQ消息接收出问题了", exception);
