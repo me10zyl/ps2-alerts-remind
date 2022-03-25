@@ -133,7 +133,7 @@ public class SubscribeUserService {
                         .eq(user.getQq() != null, SubscribeUser::getQq, user.getQq())
                         .eq(SubscribeUser::getServer, server)
                 );
-                log.info("更新数据库成功：email={},server={},qq={}", email, server, qq);
+                log.info("更新数据库成功：email={},server={},qq={}", email, server, user.getQq());
             }
         });
     }
