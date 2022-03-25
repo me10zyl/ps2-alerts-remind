@@ -14,6 +14,7 @@ import com.ps2site.util.MailTemplateUtil;
 import com.ps2site.util.Mailer;
 import com.yilnz.qqbotlib.QQBot;
 import com.yilnz.qqbotlib.entity.QQMessage;
+import com.yilnz.qqbotlib.exception.NotQQFriendException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -110,12 +111,18 @@ public class SubscribeUserService {
                     log.error("QQ机器人未初始化成功！");
                     throw new BizException("QQ机器人未初始化成功");
                 }
-                if(user.getIsQQGroup()){
-                    sendQQSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
-                    log.info("发送QQ群消息：" + user.getQq() + ", success=" +  sendQQSuccess);
-                }else {
-                    sendQQSuccess = qqBot.sendFriendMessage(user.getQq(), qqMessageList);
-                    log.info("发送QQ消息：" + user.getQq() + ", success=" +  sendQQSuccess);
+                try {
+                    if (user.getIsQQGroup()) {
+                        sendQQSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
+                        log.info("发送QQ群消息：" + user.getQq() + ", success=" + sendQQSuccess);
+                    } else {
+                        sendQQSuccess = qqBot.sendFriendMessage(user.getQq(), qqMessageList);
+                        log.info("发送QQ消息：" + user.getQq() + ", success=" + sendQQSuccess);
+                    }
+                }catch (NotQQFriendException exception){
+                    log.info(exception.getMessage() + ",自动删除订阅,qq=" + user.getQq() + ",email=" + user.getEmail() +",server=" + user.getServer());
+                    delete(user.getEmail(), user.getQq(), user.getServer());
+                    return;
                 }
             }
             if(user.getEmail() != null) {
