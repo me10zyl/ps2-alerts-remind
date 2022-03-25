@@ -86,6 +86,9 @@ public class SubscribeUserService {
     public void deliveryAlertStartedEMailsAndQQ(String serverName, AlertResult alertResult) {
         JSONObject jsonObject = JSONObject.parseObject(JSONObject.toJSONString(alertResult));
         getUsers().stream().filter(u->u.getServer().equals(serverName)).forEach(user -> {
+            if(user.getQq() == null && user.getEmail() == null){
+                return;
+            }
             String email = user.getEmail();
             String server = user.getServer();
             if(alertResult.getAlertStartTime().equals(user.getAlertStartTime())){
@@ -98,7 +101,8 @@ public class SubscribeUserService {
             variableMap.put("alertEndTimeFormat", DateUtil.format(alertResult.getAlertEndTime(), "MM/dd HH:mm:ss"));
             variableMap.put("durationFormat", alertResult.getDuration()/60 + "分钟");
             MailTemplateUtil mailTemplateUtil = new MailTemplateUtil(variableMap);
-            boolean sendSuccess = false;
+            boolean sendQQSuccess = false;
+            boolean sendMailSuccess = false;
             if(user.getQq() != null){
                 List<QQMessage> qqMessageList = new ArrayList<QQMessage>();
                 qqMessageList.add(QQMessage.textMessage(mailTemplateUtil.getQQMessage()));
@@ -107,27 +111,26 @@ public class SubscribeUserService {
                     throw new BizException("QQ机器人未初始化成功");
                 }
                 if(user.getIsQQGroup()){
-                    sendSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
-                    log.info("发送QQ群消息：" + user.getQq() + ", success=" +  sendSuccess);
+                    sendQQSuccess = qqBot.sendGroupMessage(user.getQq(), qqMessageList);
+                    log.info("发送QQ群消息：" + user.getQq() + ", success=" +  sendQQSuccess);
                 }else {
-                    sendSuccess = qqBot.sendFriendMessage(user.getQq(), qqMessageList);
-                    log.info("发送QQ消息：" + user.getQq() + ", success=" +  sendSuccess);
+                    sendQQSuccess = qqBot.sendFriendMessage(user.getQq(), qqMessageList);
+                    log.info("发送QQ消息：" + user.getQq() + ", success=" +  sendQQSuccess);
                 }
             }
             if(user.getEmail() != null) {
-                boolean mailSuccess = Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
-                if (user.getQq() == null) {
-                    sendSuccess = mailSuccess;
-                }
+                sendMailSuccess =  Mailer.sendMail(mailTemplateUtil.getTitle(), mailTemplateUtil.getContent(), email);
+                log.info("发送邮件：" + user.getEmail() + ", success=" +  sendMailSuccess);
             }
-            if(sendSuccess){
+            if(sendQQSuccess || sendMailSuccess){
                 user.setServer(null);;
                 user.setEmail(null);
                 user.setQq(null);
                 user.setIsQQGroup(null);
                 user.setAlertStartTime(alertResult.getAlertStartTime());
                 subscribeUserDao.update(user, new LambdaUpdateWrapper<SubscribeUser>()
-                        .eq(SubscribeUser::getEmail, email)
+                        .eq(email != null, SubscribeUser::getEmail, email)
+                        .eq(user.getQq() != null, SubscribeUser::getQq, user.getQq())
                         .eq(SubscribeUser::getServer, server)
                 );
                 log.info("发送成功：{},{}", email, server);
